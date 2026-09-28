@@ -594,7 +594,6 @@ export class Game {
 
   _drawPlayer(ctx, cx, cy) {
     const p = this.player;
-    const t = this.t;
     for (const a of p.afterimages) {
       if (a.life <= 0) continue;
       ctx.globalAlpha = Math.max(0, a.life / 0.2) * 0.55;

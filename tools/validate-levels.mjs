@@ -14,6 +14,7 @@ import { Level, T } from '../src/game/level.js';
 import { Player } from '../src/game/player.js';
 import { Mover, Faller, Pad, Laser, Tower } from '../src/game/objects.js';
 import { TILE, PHYS_STEP } from '../src/config.js';
+import { PHASE_PERIOD } from '../src/game/level.js';
 
 const noop = () => {};
 const fx = new Proxy({}, { get: () => noop });
@@ -30,10 +31,17 @@ function makeWorld(def) {
   game.lasers = ents.filter((e) => e.type === 'laser').map((e) => new Laser(e, game));
   game.tower = level.tower ? new Tower(level.tower.x, level.tower.y) : null;
   // Where timing matters, waiting variants of every macro are tried.
-  const timedXs = [
-    ...game.lasers.map((l) => l.ox),
-    ...[...level.dyn.values()].filter((b) => b.kind !== T.VANISH).map((b) => b.tx * TILE),
+  const timed = [
+    ...game.lasers.map((l) => ({ x: l.ox, period: l.mode === 'sweep' ? l.period : l.on + l.off })),
+    ...[...level.dyn.values()].filter((b) => b.kind !== T.VANISH).map((b) => ({ x: b.tx * TILE, period: PHASE_PERIOD })),
   ];
+  const timedXs = timed.map((e) => e.x);
+  // Period of the closest timed element (states only differ modulo it).
+  game.localPeriod = (x) => {
+    let best = null;
+    for (const e of timed) if (Math.abs(e.x - x) < 8 * TILE && (!best || Math.abs(e.x - x) < Math.abs(best.x - x))) best = e;
+    return best ? best.period : 0;
+  };
   const moverXs = game.movers.flatMap((m) => [m.x0, m.x1 + m.w]);
   // Timed hazards/blocks: the moment you arrive matters.
   game.nearTimed = (x) => timedXs.some((dx) => Math.abs(dx - x) < 8 * TILE);
@@ -145,8 +153,9 @@ function validate(index) {
   };
   const seen = new Set();
   const key = (p, t) => {
-    const onDyn = (p.ground && !(p.ground instanceof Pad)) || g.nearTimed(p.x);
-    const tb = onDyn ? Math.round((t % 25.2) / 0.35) : 0;
+    let tb = 0;
+    if (p.ground && p.ground instanceof Mover) tb = Math.round((t % p.ground.period) / 0.3);
+    else if (g.nearTimed(p.x)) { const per = g.localPeriod(p.x); tb = Math.round((t % per) / 0.3) % Math.round(per / 0.3); }
     return `${Math.round(p.x / 5)},${Math.round(p.y / 4)},${p.ground ? g.platforms.indexOf(p.ground) : -1},${tb}`;
   };
   const start = { x: lv.spawn.x, y: lv.spawn.y, t: 0 };

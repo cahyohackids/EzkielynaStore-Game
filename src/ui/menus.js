@@ -183,10 +183,17 @@ export class UI {
       if (kind === 'check') ctx.drawImage(S.checkpoint[1], 0, 0, 16, 30, 4, -3, 11, 20.6);
       if (kind === 'enemy') ctx.drawImage(S.hopper.idle0[1], 1, 3);
       if (kind === 'hazard') {
-        ctx.fillStyle = C.ink;
-        for (let i = 0; i < 3; i++) { ctx.fillRect(2 + i * 6, 16 - 0, 5, 1); }
-        for (let i = 0; i < 3; i++) for (let k = 0; k < 6; k++) { ctx.fillStyle = k > 3 ? C.cream : C.cream2; ctx.fillRect(4 + i * 6 - Math.floor(k / 2) + 0, 15 - k, 1 + Math.floor(k / 2) * 0 + 1, 1); }
-        ctx.fillStyle = C.mag; ctx.fillRect(1, 16, 18, 2);
+        // three little spikes on a corrupted base
+        for (let i = 0; i < 3; i++) {
+          const cx = 4 + i * 6;
+          for (let k = 0; k < 7; k++) {
+            const half = Math.floor(k / 3);
+            ctx.fillStyle = C.ink; ctx.fillRect(cx - half - 1, 15 - k, half * 2 + 3, 1);
+            ctx.fillStyle = k > 4 ? C.cream : C.cream2; ctx.fillRect(cx - half, 15 - k, half * 2 + 1, 1);
+          }
+        }
+        ctx.fillStyle = C.ink; ctx.fillRect(0, 16, 20, 3);
+        ctx.fillStyle = C.mag; ctx.fillRect(1, 17, 18, 1);
       }
       const row = document.createElement('div');
       row.style.display = 'contents';
@@ -334,7 +341,6 @@ export class UI {
 
   showComplete(st) {
     this.show('complete');
-    const saved = this.save.level(LEVEL_IDS[st.levelIndex]);
     $('#complete-sub', this.root).textContent = `Sector ${st.levelIndex + 1} — ${st.name} is back online.`;
     const coreIcons = [0, 1, 2].map((k) => `<i class="core-ico${st.cores[k] ? ' on' : ''}"></i>`).join('');
     const rows = [
@@ -353,7 +359,6 @@ export class UI {
     const next = $('#next-btn', this.root);
     next.textContent = st.last ? 'Main Menu' : 'Next Level';
     next.dataset.act = st.last ? 'menu' : 'next';
-    void saved;
   }
 
   _syncTitle() {

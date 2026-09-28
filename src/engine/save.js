@@ -21,11 +21,11 @@ export class Save {
         const d = JSON.parse(raw);
         this.data = { ...defaults(), ...d, settings: { ...defaults().settings, ...(d.settings || {}) } };
       }
-    } catch (_) { /* storage unavailable: play without persistence */ }
+    } catch { /* storage unavailable: play without persistence */ }
   }
 
   write() {
-    try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch (_) { /* ignore */ }
+    try { localStorage.setItem(KEY, JSON.stringify(this.data)); } catch { /* ignore */ }
   }
 
   get settings() { return this.data.settings; }

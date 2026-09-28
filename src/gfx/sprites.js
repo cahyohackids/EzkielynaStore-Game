@@ -375,8 +375,3 @@ export function buildSprites() {
   S.pad = padFrames();
   return S;
 }
-
-/** Render a bigger icon of PIP for menus. */
-export function pipIcon(sprites, frame = 'idle0') {
-  return sprites.pip[frame][1];
-}
