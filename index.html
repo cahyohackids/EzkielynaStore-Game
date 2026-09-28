@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="PIXELBOUND: Lost Signal — a handcrafted pixel platformer. Guide PIP the courier robot through three sectors to restore the network." />
+  <title>PIXELBOUND: Lost Signal</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/silkscreen-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="stage">
+      <canvas id="game" width="400" height="225" aria-label="Game view"></canvas>
+      <div id="ui" aria-live="polite"></div>
+    </div>
+    <div id="touch" aria-hidden="true">
+      <div class="t-cluster t-left">
+        <div class="t-btn t-dpad" data-zone="dpad">
+          <span class="t-half t-l"><i class="ico ico-left"></i></span>
+          <span class="t-half t-r"><i class="ico ico-right"></i></span>
+        </div>
+      </div>
+      <div class="t-cluster t-right">
+        <div class="t-btn t-dash" data-action="dash"><i class="ico ico-dash"></i></div>
+        <div class="t-btn t-jump" data-action="jump"><i class="ico ico-jump"></i></div>
+      </div>
+      <button class="t-pause" data-action="pause" aria-label="Pause"><i class="ico ico-pause"></i></button>
+    </div>
+    <div id="rotate" aria-hidden="true">
+      <div class="rotate-card">
+        <div class="rotate-phone"></div>
+        <p>Rotate to landscape</p>
+      </div>
+    </div>
+  </div>
+  <noscript>PIXELBOUND: Lost Signal needs JavaScript to run.</noscript>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
